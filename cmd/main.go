@@ -70,29 +70,29 @@ func addFiles(filesPath, isoPath string) error {
 		if info.IsDir() {
 			hdr := &cpio.Header{
 				Name: path,
-				Mode: 0775,
+				Mode: 040775,
 				Size: 0,
 			}
 			if err := w.WriteHeader(hdr); err != nil {
 				return err
 			}
-		}
+		} else {
+			hdr := &cpio.Header{
+				Name: path,
+				Mode: 0664,
+				Size: info.Size(),
+			}
+			if err := w.WriteHeader(hdr); err != nil {
+				return err
+			}
 
-		hdr := &cpio.Header{
-			Name: path,
-			Mode: 0664,
-			Size: info.Size(),
-		}
-		if err := w.WriteHeader(hdr); err != nil {
-			return err
-		}
-		content, err := ioutil.ReadFile(path)
-		if err != nil {
-			return err
-		}
-
-		if _, err := w.Write(content); err != nil {
-			return err
+			content, err := ioutil.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			if _, err := w.Write(content); err != nil {
+				return err
+			}
 		}
 
 		return nil
