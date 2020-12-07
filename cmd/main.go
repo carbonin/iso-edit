@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 
 	cpio "github.com/cavaliercoder/go-cpio"
 	isoutil "github.com/kdomanski/iso9660/util"
@@ -55,7 +56,7 @@ func unpackISO(isoPath string) (string, error) {
 
 // adds all the files at filesPath to the unpacked iso at isoPath as an additional image
 func addFiles(filesPath, isoPath string) error {
-	f, err := os.Create(filepath.Join(isoPath, "IMAGES/my_image"))
+	f, err := os.Create(filepath.Join(isoPath, "IMAGES/MY_IMAGE.IMG"))
 	if err != nil {
 		return fmt.Errorf("failed to open image file: %s", err)
 	}
@@ -97,10 +98,33 @@ func addFiles(filesPath, isoPath string) error {
 
 		return nil
 	})
+
 	if err := w.Close(); err != nil {
 		return err
 	}
-	// edit config
+
+	// edit config to add new image to initrd
+	err := editFile(filepath.Join(isoPath, "EFI/REDHAT/GRUB.CFG"), `(?m)^(\s+initrd) (.+| )+$`, "$1 $2 /images/my_image.img")
+	if err != nil {
+		return err
+	}
+	return editFile(filepath.Join(isoPath, "ISOLINUX/ISOLINUX.CFG"), `(?m)^(\s+append.*initrd=\S+) (.*)$`, "${1},/images/my_image.img ${2}")
+}
+
+func editFile(fileName string, reString string, replacement string) error {
+	content, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		return err
+	}
+
+	re := regexp.MustCompile(reString)
+	newContent := re.ReplaceAllString(string(content), replacement)
+	fmt.Println(newContent)
+
+	if err := ioutil.WriteFile(fileName, []byte(newContent), 0644); err != nil {
+		return err
+	}
+
 	return nil
 }
 
