@@ -9,6 +9,7 @@ import (
 	"regexp"
 
 	cpio "github.com/cavaliercoder/go-cpio"
+	"github.com/kdomanski/iso9660"
 	isoutil "github.com/kdomanski/iso9660/util"
 )
 
@@ -62,8 +63,7 @@ func addFiles(filesPath, isoPath string) error {
 	}
 
 	w := cpio.NewWriter(f)
-	// find and read files
-	err = filepath.Walk(filesPath, func(path string, info os.FileInfo, err error) error {
+	addFileToArchive := func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -97,14 +97,19 @@ func addFiles(filesPath, isoPath string) error {
 		}
 
 		return nil
-	})
+	}
+
+	if err := filepath.Walk(filesPath, addFileToArchive); err != nil {
+		w.Close()
+		return err
+	}
 
 	if err := w.Close(); err != nil {
 		return err
 	}
 
 	// edit config to add new image to initrd
-	err := editFile(filepath.Join(isoPath, "EFI/REDHAT/GRUB.CFG"), `(?m)^(\s+initrd) (.+| )+$`, "$1 $2 /images/my_image.img")
+	err = editFile(filepath.Join(isoPath, "EFI/REDHAT/GRUB.CFG"), `(?m)^(\s+initrd) (.+| )+$`, "$1 $2 /images/my_image.img")
 	if err != nil {
 		return err
 	}
@@ -130,5 +135,51 @@ func editFile(fileName string, reString string, replacement string) error {
 
 // creates a new iso out of the directory structure at isoDir and writes it to outPath
 func packISO(isoDir, outPath string) error {
+	w, err := iso9660.NewWriter()
+	if err != nil {
+		return err
+	}
+	defer w.Cleanup()
+
+	addFileToISO := func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+
+		f, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+
+		p, err := filepath.Rel(isoDir, path)
+		if err != nil {
+			return err
+		}
+		if err := w.AddFile(f, p); err != nil {
+			return err
+		}
+
+		return nil
+	}
+	if err := filepath.Walk(isoDir, addFileToISO); err != nil {
+		return err
+	}
+	isoFile, err := os.Create(outPath)
+	if err != nil {
+		return err
+	}
+
+	if err := w.WriteTo(isoFile, outPath); err != nil {
+		return err
+	}
+
+	if err := isoFile.Close(); err != nil {
+		return err
+	}
+
 	return nil
 }

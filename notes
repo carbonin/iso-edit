@@ -1,0 +1,8 @@
+Unpack works well and was able to edit the config files successfully
+
+Repacking via the current go module is not producing a bootable iso
+To do this, I took the output directory after editing the config, made everything lowercase then had to run make_iso.sh to get a bootable image.
+
+Opened https://github.com/kdomanski/iso9660/issues/8, but I doubt that will get done fast enough even if we were to take on the work.
+
+https://github.com/diskfs/go-diskfs looks promising, but I would have to sort out how to export as well as package the iso as we don't want to carry two iso modules.
