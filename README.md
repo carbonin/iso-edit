@@ -17,7 +17,28 @@ genisoimage \
    -no-emul-boot \
    -o isos/test-iso.iso \
    /tmp/iso-test/
+
+Probably more like this:
+From https://github.com/coreos/coreos-assembler
+
+genisoimage \
+   -verbose \
+   -V rhcos-46.82.202010091720-0 -volset rhcos-46.82.202010091720-0 \
+   -rational-rock -J -joliet-long \
+   -eltorito-boot isolinux/isolinux.bin \
+   -eltorito-catalog isolinux/isolinux.cat \
+   -no-emul-boot -boot-load-size 4 -boot-info-table \
+   -eltorito-alt-boot \
+   -efi-boot images/efiboot.img \
+   -no-emul-boot \
+   -o isos/test-iso.iso \
+   /tmp/iso-test/
+
+isohybrid isos/test-iso.iso
 ```
+
+Also this?
+https://github.com/coreos/coreos-assembler/blob/510dbec7b84aa45a646079fe3341e2b5925c0774/src/cmd-buildextend-live#L481-L511
 
 ## How to use
 

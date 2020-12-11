@@ -103,11 +103,13 @@ func copyAll(fs filesystem.FileSystem, fsDir string, infos []os.FileInfo, target
 				return err
 			}
 
-			_, err = io.Copy(osFile, fsFile)
+			wrote, err := io.Copy(osFile, fsFile)
 			if err != nil {
 				osFile.Close()
 				return err
 			}
+
+			fmt.Printf("wrote %d bytes to %s\n", wrote, osName)
 
 			if err := osFile.Close(); err != nil {
 				return err
