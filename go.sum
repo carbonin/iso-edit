@@ -1,3 +1,5 @@
+github.com/carbonin/go-diskfs v1.1.2-0.20201211200112-609347dc0bbc h1:UHgOg1bjr/an+apndaqqbRTVKm32R/bAGUjL+uqE3VY=
+github.com/carbonin/go-diskfs v1.1.2-0.20201211200112-609347dc0bbc/go.mod h1:G2xL03UmWPeayUbduNnZlYsYTvZlNXTlkfVSTSW94+M=
 github.com/cavaliercoder/go-cpio v0.0.0-20180626203310-925f9528c45e h1:hHg27A0RSSp2Om9lubZpiMgVbvn39bsUmW9U5h0twqc=
 github.com/cavaliercoder/go-cpio v0.0.0-20180626203310-925f9528c45e/go.mod h1:oDpT4efm8tSYHXV5tHSdRvBet/b/QzxZ+XyyPehvm3A=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=

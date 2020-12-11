@@ -5,8 +5,7 @@ build:
 
 clean:
 	rm -rf build/*
-	rm -rf /tmp/iso-test
-	rm -f isos/my-rhcos.iso
+	rm -rf isos/my-rhcos*
 
 run: clean build
 	./build/iso-edit

@@ -2,25 +2,9 @@
 
 The goal of this test program is to unpack a base iso and inject an additional cpio archive such that arbitrary files can be added to the initrd.
 
-The repackaging step should, ideally do the same thing as:
+The repackaging step now runs the following commands, but ideally it should use the go-diskfs library to do this
 
 ```bash
-genisoimage \
-   -V rhcos-46.82.202010091720-0 \
-   -c isolinux/boot.cat \
-   -b isolinux/isolinux.bin \
-   -no-emul-boot \
-   -boot-load-size 4 \
-   -boot-info-table \
-   -eltorito-alt-boot \
-   -e images/efiboot.img \
-   -no-emul-boot \
-   -o isos/test-iso.iso \
-   /tmp/iso-test/
-
-Probably more like this:
-From https://github.com/coreos/coreos-assembler
-
 genisoimage \
    -verbose \
    -V rhcos-46.82.202010091720-0 -volset rhcos-46.82.202010091720-0 \
@@ -48,8 +32,7 @@ https://github.com/coreos/coreos-assembler/blob/510dbec7b84aa45a646079fe3341e2b5
 
 ## Notes
 
-1. Running currently leaves the unpacked iso at `/tmp/iso-test`
+1. Running currently leaves the unpacked iso at `isos/my-rhcos`
 2. The default location for the iso is `isos/my-rhcos.iso`
-3. The input iso, output path, and files to add are all configurable with flags
-4. `make run` is a convienience which will remove the temp dir and the default output iso, rebuild, and run with the defaults.
+4. `make run` is a convienience which will remove the my-rhcos dir and the default output iso, rebuild, and run with the defaults.
 

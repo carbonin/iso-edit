@@ -7,3 +7,5 @@ require (
 	github.com/diskfs/go-diskfs v1.1.1
 	github.com/sirupsen/logrus v1.7.0 // indirect
 )
+
+replace github.com/diskfs/go-diskfs => github.com/carbonin/go-diskfs v1.1.2-0.20201211200112-609347dc0bbc
