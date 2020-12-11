@@ -37,7 +37,7 @@ func unpackISO(isoPath, dir string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("FileSystem: %+v\n", fs)
+	fmt.Printf("FileSystem: %+v\n\n", fs)
 
 	files, err := fs.ReadDir("/")
 	if err != nil {
@@ -67,7 +67,6 @@ func copyAll(fs filesystem.FileSystem, fsDir string, infos []os.FileInfo, target
 			}
 		} else {
 			fmt.Printf("Opening file: %s\n", fsName)
-			fmt.Printf("FileSystem: %+v\n", fs)
 			fsFile, err := fs.OpenFile(fsName, os.O_RDONLY)
 			if err != nil {
 				return err
@@ -84,7 +83,7 @@ func copyAll(fs filesystem.FileSystem, fsDir string, infos []os.FileInfo, target
 				return err
 			}
 
-			fmt.Printf("wrote %d bytes to %s, size: %d\n", wrote, osName, info.Size())
+			fmt.Printf("wrote %d bytes to %s, size: %d\n\n", wrote, osName, info.Size())
 
 			if err := osFile.Close(); err != nil {
 				return err
