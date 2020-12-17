@@ -248,14 +248,16 @@ func packISO(isoDir string, outPath string, size int64) error {
 
 	options := iso9660.FinalizeOptions{
 		VolumeIdentifier: "rhcos-46.82.202010091720-0",
+		RockRidge:        true,
 		ElTorito: &iso9660.ElTorito{
 			BootCatalog: "isolinux/boot.cat",
 			Entries: []*iso9660.ElToritoEntry{
 				&iso9660.ElToritoEntry{
-					Platform:    iso9660.BIOS,
-					Emulation:   iso9660.NoEmulation,
-					BootFile:    "isolinux/isolinux.bin",
-					LoadSegment: 4,
+					Platform:  iso9660.BIOS,
+					Emulation: iso9660.NoEmulation,
+					BootFile:  "isolinux/isolinux.bin",
+					BootTable: true,
+					LoadSize:  4,
 				},
 				&iso9660.ElToritoEntry{
 					Platform:  iso9660.EFI,
