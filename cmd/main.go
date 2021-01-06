@@ -19,7 +19,7 @@ import (
 func main() {
 	inPath := flag.String("in", "isos/rhcos-4.6.1-x86_64-live.x86_64.iso", "input ISO path")
 	outPath := flag.String("out", "isos/my-rhcos.iso", "output ISO path")
-	filesPath := flag.String("files", "files", "directory to add to the iso")
+	filesPath := flag.String("files", "rdfiles", "directory to add to the iso")
 
 	err := patchISO(*inPath, *filesPath, *outPath)
 	if err != nil {
@@ -131,10 +131,19 @@ func addFiles(filesPath, isoPath string) error {
 		if err != nil {
 			return err
 		}
+		targetPath, err := filepath.Rel(filesPath, path)
+		if err != nil {
+			return err
+		}
+		if targetPath == "/" || targetPath == "." {
+			return nil
+		}
+
+		fmt.Printf("adding %s to archive at %s\n", path, targetPath)
 
 		if info.IsDir() {
 			hdr := &cpio.Header{
-				Name: path,
+				Name: targetPath,
 				Mode: 040775,
 				Size: 0,
 			}
@@ -143,8 +152,8 @@ func addFiles(filesPath, isoPath string) error {
 			}
 		} else {
 			hdr := &cpio.Header{
-				Name: path,
-				Mode: 0664,
+				Name: targetPath,
+				Mode: cpio.FileMode(info.Mode()),
 				Size: info.Size(),
 			}
 			if err := w.WriteHeader(hdr); err != nil {
