@@ -20,6 +20,7 @@ func main() {
 	inPath := flag.String("in", "isos/rhcos-4.6.1-x86_64-live.x86_64.iso", "input ISO path")
 	outPath := flag.String("out", "isos/my-rhcos.iso", "output ISO path")
 	filesPath := flag.String("files", "rdfiles", "directory to add to the iso")
+	flag.Parse()
 
 	err := patchISO(*inPath, *filesPath, *outPath)
 	if err != nil {
